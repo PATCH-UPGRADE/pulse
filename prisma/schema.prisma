@@ -15,16 +15,19 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  workflows     Workflow[]
+  id              String            @id
+  name            String
+  email           String
+  emailVerified   Boolean           @default(false)
+  image           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  sessions        Session[]
+  accounts        Account[]
+  workflows       Workflow[]
+  assets          Asset[]
+  assetSettings   AssetSettings[]
+  vulnerabilities Vulnerability[]
 
   @@unique([email])
   @@map("user")
@@ -128,4 +131,56 @@ model Connection {
   updatedAt DateTime @updatedAt
 
   @@unique([fromNodeId, toNodeId, fromOutput, toInput])
+}
+
+model Asset {
+  id String @id @default(cuid())
+  ip String
+  cpe String
+  role String
+  upstream_api String
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("asset")
+}
+
+model AssetSettings {
+  id String @id @default(cuid())
+  url String
+  name String
+  token String
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("asset_settings")
+}
+
+model Vulnerability {
+  id          String @id @default(cuid())
+  sarif       Json
+  cpe         String
+  exploitUri  String
+  upstreamApi String
+  description String @db.Text
+  narrative   String @db.Text
+  impact      String @db.Text
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cpe])
+  @@index([userId])
+  @@map("vulnerability")
 }

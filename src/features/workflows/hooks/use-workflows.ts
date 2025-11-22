@@ -24,9 +24,13 @@ export const useCreateWorkflow = () => {
     trpc.workflows.create.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow "${data.name}" created`);
-        queryClient.invalidateQueries(
-          trpc.workflows.getMany.queryOptions({}),
-        );
+        // Invalidate all getMany queries regardless of params (page, search, etc.)
+        queryClient.invalidateQueries({
+          predicate: (query) => {
+            const baseKey = trpc.workflows.getMany.queryKey();
+            return query.queryKey[0] === baseKey[0];
+          },
+        });
       },
       onError: (error) => {
         toast.error(`Failed to create workflow: ${error.message}`);
@@ -46,10 +50,14 @@ export const useRemoveWorkflow = () => {
     trpc.workflows.remove.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow "${data.name}" removed`);
-        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}));
-        queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryFilter({ id: data.id }),
-        );
+        // Invalidate all getMany and getOne queries regardless of params
+        queryClient.invalidateQueries({
+          predicate: (query) => {
+            const getManyKey = trpc.workflows.getMany.queryKey();
+            const getOneKey = trpc.workflows.getOne.queryKey();
+            return query.queryKey[0] === getManyKey[0] || query.queryKey[0] === getOneKey[0];
+          },
+        });
       }
     })
   )
@@ -74,12 +82,14 @@ export const useUpdateWorkflowName = () => {
     trpc.workflows.updateName.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow "${data.name}" updated`);
-        queryClient.invalidateQueries(
-          trpc.workflows.getMany.queryOptions({}),
-        );
-        queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryOptions({ id: data.id }),
-        );
+        // Invalidate all getMany and getOne queries regardless of params
+        queryClient.invalidateQueries({
+          predicate: (query) => {
+            const getManyKey = trpc.workflows.getMany.queryKey();
+            const getOneKey = trpc.workflows.getOne.queryKey();
+            return query.queryKey[0] === getManyKey[0] || query.queryKey[0] === getOneKey[0];
+          },
+        });
       },
       onError: (error) => {
         toast.error(`Failed to update workflow: ${error.message}`);
@@ -99,12 +109,14 @@ export const useUpdateWorkflow = () => {
     trpc.workflows.update.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow "${data.name}" saved`);
-        queryClient.invalidateQueries(
-          trpc.workflows.getMany.queryOptions({}),
-        );
-        queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryOptions({ id: data.id }),
-        );
+        // Invalidate all getMany and getOne queries regardless of params
+        queryClient.invalidateQueries({
+          predicate: (query) => {
+            const getManyKey = trpc.workflows.getMany.queryKey();
+            const getOneKey = trpc.workflows.getOne.queryKey();
+            return query.queryKey[0] === getManyKey[0] || query.queryKey[0] === getOneKey[0];
+          },
+        });
       },
       onError: (error) => {
         toast.error(`Failed to save workflow: ${error.message}`);
