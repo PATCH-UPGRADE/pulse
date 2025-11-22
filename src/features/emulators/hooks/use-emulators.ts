@@ -1,7 +1,34 @@
 import { useTRPC } from "@/trpc/client"
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery, type QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useEmulatorsParams } from "./use-emulators-params";
+
+/**
+ * Helper to invalidate emulator queries
+ */
+const invalidateEmulatorQueries = (
+  queryClient: QueryClient,
+  trpc: ReturnType<typeof useTRPC>,
+  options: { includeGetOne?: boolean } = {}
+) => {
+  const { includeGetOne = false } = options;
+
+  queryClient.invalidateQueries({
+    predicate: (query) => {
+      const getManyKey = trpc.emulators.getMany.queryKey();
+      const isManyQuery = query.queryKey[0] === getManyKey[0];
+
+      if (!includeGetOne) {
+        return isManyQuery;
+      }
+
+      const getOneKey = trpc.emulators.getOne.queryKey();
+      const isOneQuery = query.queryKey[0] === getOneKey[0];
+
+      return isManyQuery || isOneQuery;
+    },
+  });
+};
 
 /**
  * Hook to fetch all emulators using suspense
@@ -24,13 +51,7 @@ export const useCreateEmulator = () => {
     trpc.emulators.create.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Emulator "${data.role}" created`);
-        // Invalidate all getMany queries regardless of params (page, search, etc.)
-        queryClient.invalidateQueries({
-          predicate: (query) => {
-            const baseKey = trpc.emulators.getMany.queryKey();
-            return query.queryKey[0] === baseKey[0];
-          },
-        });
+        invalidateEmulatorQueries(queryClient, trpc);
       },
       onError: (error) => {
         toast.error(`Failed to create emulator: ${error.message}`);
@@ -50,14 +71,7 @@ export const useUpdateEmulator = () => {
     trpc.emulators.update.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Emulator "${data.role}" updated`);
-        // Invalidate all getMany and getOne queries regardless of params
-        queryClient.invalidateQueries({
-          predicate: (query) => {
-            const getManyKey = trpc.emulators.getMany.queryKey();
-            const getOneKey = trpc.emulators.getOne.queryKey();
-            return query.queryKey[0] === getManyKey[0] || query.queryKey[0] === getOneKey[0];
-          },
-        });
+        invalidateEmulatorQueries(queryClient, trpc, { includeGetOne: true });
       },
       onError: (error) => {
         toast.error(`Failed to update emulator: ${error.message}`);
@@ -77,14 +91,7 @@ export const useRemoveEmulator = () => {
     trpc.emulators.remove.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Emulator "${data.role}" removed`);
-        // Invalidate all getMany and getOne queries regardless of params
-        queryClient.invalidateQueries({
-          predicate: (query) => {
-            const getManyKey = trpc.emulators.getMany.queryKey();
-            const getOneKey = trpc.emulators.getOne.queryKey();
-            return query.queryKey[0] === getManyKey[0] || query.queryKey[0] === getOneKey[0];
-          },
-        });
+        invalidateEmulatorQueries(queryClient, trpc, { includeGetOne: true });
       },
       onError: (error) => {
         toast.error(`Failed to remove emulator: ${error.message}`);

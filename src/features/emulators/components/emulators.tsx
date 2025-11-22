@@ -213,14 +213,14 @@ function EmulatorDrawer({
                 {emulator.dockerUrl ? "Docker Image" : "Download URL"}
               </div>
               <a
-                href={emulator.dockerUrl || emulator.downloadUrl || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-primary hover:underline flex items-center gap-1 break-all"
-              >
-                {emulator.dockerUrl || emulator.downloadUrl}
-                <ExternalLinkIcon className="size-3 flex-shrink-0" />
-              </a>
+                  href={emulator.dockerUrl || emulator.downloadUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline flex items-center gap-1 break-all"
+                >
+                  {emulator.dockerUrl || emulator.downloadUrl}
+                  <ExternalLinkIcon className="size-3 flex-shrink-0" />
+                </a>
             </div>
           </div>
 

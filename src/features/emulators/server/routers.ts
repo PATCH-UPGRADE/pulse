@@ -25,8 +25,8 @@ const safeUrlSchema = z
 const emulatorInputSchema = z
   .object({
     role: z.string().min(1, "Role is required"),
-    downloadUrl: z.string().url().nullable().optional(),
-    dockerUrl: z.string().url().nullable().optional(),
+    downloadUrl: safeUrlSchema.nullable().optional(),
+    dockerUrl: safeUrlSchema.nullable().optional(),
     description: z.string().min(1, "Description is required"),
     assetId: z.string().min(1, "Asset ID is required"),
   })
@@ -46,8 +46,8 @@ const emulatorUpdateSchema = z
   .object({
     id: z.string(),
     role: z.string().min(1, "Role is required"),
-    downloadUrl: z.string().url().nullable().optional(),
-    dockerUrl: z.string().url().nullable().optional(),
+    downloadUrl: safeUrlSchema.nullable().optional(),
+    dockerUrl: safeUrlSchema.nullable().optional(),
     description: z.string().min(1, "Description is required"),
     assetId: z.string().min(1, "Asset ID is required"),
   })
@@ -202,7 +202,7 @@ export const emulatorsRouter = createTRPCRouter({
     })
     .output(emulatorResponseSchema)
     .query(async ({ input }) => {
-      return prisma.emulator.findUniqueOrThrow({
+      const emulator = await prisma.emulator.findUnique({
         where: { id: input.id },
         include: {
           user: {
@@ -224,6 +224,15 @@ export const emulatorsRouter = createTRPCRouter({
           },
         },
       });
+
+      if (!emulator) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Emulator not found",
+        });
+      }
+
+      return emulator;
     }),
 
   // POST /api/emulators - Create emulator
