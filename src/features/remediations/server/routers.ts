@@ -324,7 +324,7 @@ export const remediationsRouter = createTRPCRouter({
       // First check if the remediation exists and belongs to the current user
       const remediation = await prisma.remediation.findUnique({
         where: { id: input.id },
-        select: { userId: true },
+        select: { userId: true, vulnerabilityId: true },
       });
 
       if (!remediation) {
@@ -342,7 +342,7 @@ export const remediationsRouter = createTRPCRouter({
       }
 
       // Verify the vulnerability exists if it's being changed
-      if (input.data.vulnerabilityId !== remediation.userId) {
+      if (input.data.vulnerabilityId !== remediation.vulnerabilityId) {
         const vulnerability = await prisma.vulnerability.findUnique({
           where: { id: input.data.vulnerabilityId },
         });
