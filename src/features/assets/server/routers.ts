@@ -246,6 +246,65 @@ export const assetsRouter = createTRPCRouter({
       });
     }),
 
+  // PUT /api/assets/{asset_id} - Update asset (only creator can update)
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        ip: z.string().min(1),
+        cpe: z.string().regex(/^cpe:2\.3:[^:]+:[^:]+:[^:]+/, "Invalid CPE 2.3 format"),
+        role: z.string().min(1),
+        upstream_api: z.string().url(),
+      })
+    )
+    .meta({
+      openapi: {
+        method: "PUT",
+        path: "/assets/{id}",
+        tags: ["Assets"],
+        summary: "Update Asset",
+        description: "Update an asset. Only the user who created the asset can update it.",
+      },
+    })
+    .output(assetResponseSchema)
+    .mutation(async ({ ctx, input }) => {
+      // First check if the asset exists and belongs to the current user
+      const asset = await prisma.asset.findUnique({
+        where: { id: input.id },
+        select: { userId: true },
+      });
+
+      if (!asset) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Asset not found",
+        });
+      }
+
+      if (asset.userId !== ctx.auth.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only update assets that you created",
+        });
+      }
+
+      const { id, ...updateData } = input;
+      return prisma.asset.update({
+        where: { id },
+        data: updateData,
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+        },
+      });
+    }),
+
   // GET /api/assets/settings - List all asset settings
   getSettings: protectedProcedure
     .input(

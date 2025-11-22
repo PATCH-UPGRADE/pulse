@@ -1,14 +1,16 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import 'swagger-ui-react/swagger-ui.css';
-
-const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false });
+import { ApiReferenceReact } from '@scalar/api-reference-react';
+import '@scalar/api-reference-react/style.css';
 
 export default function OpenApiDocsPage() {
   return (
-    <div className="min-h-screen">
-      <SwaggerUI url="/api/openapi.json" />
-    </div>
+    <ApiReferenceReact
+      configuration={{
+        spec: {
+          url: '/api/openapi.json',
+        },
+      }}
+    />
   );
 }

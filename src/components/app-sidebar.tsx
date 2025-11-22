@@ -5,6 +5,7 @@ import {
   HeartIcon,
   ComputerIcon,
   FolderOpenIcon,
+  WorkflowIcon,
   CpuIcon,
   HistoryIcon,
   KeyIcon,
@@ -32,7 +33,7 @@ const menuItems = [
     items: [
       {
         title: "Workflows",
-        icon: FolderOpenIcon,
+        icon: WorkflowIcon,
         url: "/workflows",
       },
       {
