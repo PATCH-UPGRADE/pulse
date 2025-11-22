@@ -74,7 +74,10 @@ export const assetsRouter = createTRPCRouter({
   getMany: protectedProcedure
     .input(
       z.object({
-        page: z.number().default(PAGINATION.DEFAULT_PAGE),
+        page: z
+          .number()
+          .min(PAGINATION.DEFAULT_PAGE)
+          .default(PAGINATION.DEFAULT_PAGE),
         pageSize: z
           .number()
           .min(PAGINATION.MIN_PAGE_SIZE)
@@ -323,8 +326,8 @@ export const assetsRouter = createTRPCRouter({
         method: "GET",
         path: "/assets/settings",
         tags: ["Assets"],
-        summary: "Get Asset Settings",
-        description: "Get all asset settings. Any authenticated user can view all settings.",
+        summary: "Get Asset Manager Settings",
+        description: "Get all asset managers that have been set up. Any authenticated user can view all settings.",
       },
     })
     .output(paginatedSettingsResponseSchema)
@@ -387,8 +390,8 @@ export const assetsRouter = createTRPCRouter({
         method: "POST",
         path: "/assets/settings",
         tags: ["Assets"],
-        summary: "Create Asset Setting",
-        description: "Create a new asset setting. The authenticated user will be recorded as the creator.",
+        summary: "Create Asset Manager",
+        description: "Create a new asset manager to sync from. The authenticated user will be recorded as the creator.",
       },
     })
     .output(settingsResponseSchema)

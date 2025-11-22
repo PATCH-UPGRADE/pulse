@@ -24,9 +24,9 @@ export const useCreateWorkflow = () => {
     trpc.workflows.create.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow "${data.name}" created`);
-        queryClient.invalidateQueries(
-          trpc.workflows.getMany.queryOptions({}),
-        );
+        queryClient.invalidateQueries({
+          queryKey: trpc.workflows.getMany.queryKey(),
+        });
       },
       onError: (error) => {
         toast.error(`Failed to create workflow: ${error.message}`);
@@ -46,10 +46,12 @@ export const useRemoveWorkflow = () => {
     trpc.workflows.remove.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow "${data.name}" removed`);
-        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}));
-        queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryFilter({ id: data.id }),
-        );
+        queryClient.invalidateQueries({
+          queryKey: trpc.workflows.getMany.queryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.workflows.getOne.queryKey(),
+        });
       }
     })
   )
@@ -74,12 +76,12 @@ export const useUpdateWorkflowName = () => {
     trpc.workflows.updateName.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow "${data.name}" updated`);
-        queryClient.invalidateQueries(
-          trpc.workflows.getMany.queryOptions({}),
-        );
-        queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryOptions({ id: data.id }),
-        );
+        queryClient.invalidateQueries({
+          queryKey: trpc.workflows.getMany.queryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.workflows.getOne.queryKey(),
+        });
       },
       onError: (error) => {
         toast.error(`Failed to update workflow: ${error.message}`);
@@ -99,12 +101,12 @@ export const useUpdateWorkflow = () => {
     trpc.workflows.update.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow "${data.name}" saved`);
-        queryClient.invalidateQueries(
-          trpc.workflows.getMany.queryOptions({}),
-        );
-        queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryOptions({ id: data.id }),
-        );
+        queryClient.invalidateQueries({
+          queryKey: trpc.workflows.getMany.queryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.workflows.getOne.queryKey(),
+        });
       },
       onError: (error) => {
         toast.error(`Failed to save workflow: ${error.message}`);

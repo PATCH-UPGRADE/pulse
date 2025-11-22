@@ -7,7 +7,7 @@ export async function GET() {
     title: 'PATCH Vulnerability Management API',
     description: 'API for managing assets, vulnerabilities, and remediations in hospital environments',
     version: '1.0.0',
-    baseUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000/api',
+    baseUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000/api/trpc',
     docsUrl: 'https://github.com/PATCH-UPGRADE',
     tags: ['Assets', 'Vulnerabilities', 'Remediations'],
   });

@@ -24,9 +24,9 @@ export const useCreateAsset = () => {
     trpc.assets.create.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Asset "${data.role}" created`);
-        queryClient.invalidateQueries(
-          trpc.assets.getMany.queryOptions({}),
-        );
+        queryClient.invalidateQueries({
+          queryKey: trpc.assets.getMany.queryKey(),
+        });
       },
       onError: (error) => {
         toast.error(`Failed to create asset: ${error.message}`);
@@ -46,12 +46,12 @@ export const useUpdateAsset = () => {
     trpc.assets.update.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Asset "${data.role}" updated`);
-        queryClient.invalidateQueries(
-          trpc.assets.getMany.queryOptions({}),
-        );
-        queryClient.invalidateQueries(
-          trpc.assets.getOne.queryOptions({ id: data.id }),
-        );
+        queryClient.invalidateQueries({
+          queryKey: trpc.assets.getMany.queryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.assets.getOne.queryKey(),
+        });
       },
       onError: (error) => {
         toast.error(`Failed to update asset: ${error.message}`);
@@ -71,10 +71,12 @@ export const useRemoveAsset = () => {
     trpc.assets.remove.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Asset "${data.role}" removed`);
-        queryClient.invalidateQueries(trpc.assets.getMany.queryOptions({}));
-        queryClient.invalidateQueries(
-          trpc.assets.getOne.queryFilter({ id: data.id }),
-        );
+        queryClient.invalidateQueries({
+          queryKey: trpc.assets.getMany.queryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.assets.getOne.queryKey(),
+        });
       },
       onError: (error) => {
         toast.error(`Failed to remove asset: ${error.message}`);

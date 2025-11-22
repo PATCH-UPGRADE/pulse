@@ -15,18 +15,19 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  workflows     Workflow[]
-  assets        Asset[]
-  assetSettings AssetSettings[]
+  id              String            @id
+  name            String
+  email           String
+  emailVerified   Boolean           @default(false)
+  image           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  sessions        Session[]
+  accounts        Account[]
+  workflows       Workflow[]
+  assets          Asset[]
+  assetSettings   AssetSettings[]
+  vulnerabilities Vulnerability[]
 
   @@unique([email])
   @@map("user")
@@ -161,4 +162,25 @@ model AssetSettings {
   updatedAt DateTime @updatedAt
 
   @@map("asset_settings")
+}
+
+model Vulnerability {
+  id          String @id @default(cuid())
+  sarif       Json
+  cpe         String
+  exploitUri  String
+  upstreamApi String
+  description String @db.Text
+  narrative   String @db.Text
+  impact      String @db.Text
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cpe])
+  @@index([userId])
+  @@map("vulnerability")
 }

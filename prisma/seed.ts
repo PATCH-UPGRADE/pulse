@@ -153,10 +153,149 @@ const SAMPLE_ASSETS = [
   },
 ];
 
+// Sample hospital vulnerability data
+const SAMPLE_VULNERABILITIES = [
+  {
+    sarif: {
+      version: '2.1.0',
+      runs: [{
+        tool: { driver: { name: 'NVD Scanner' } },
+        results: [{
+          ruleId: 'CVE-2024-1234',
+          level: 'error',
+          message: { text: 'Buffer overflow in Philips IntelliVue patient monitor firmware' }
+        }]
+      }]
+    },
+    cpe: 'cpe:2.3:h:philips:intellivue_mp70:*:*:*:*:*:*:*:*',
+    exploitUri: 'https://github.com/security-research/cve-2024-1234-poc',
+    upstreamApi: 'https://nvd.nist.gov/vuln/detail/CVE-2024-1234',
+    description: 'Buffer overflow vulnerability in Philips IntelliVue MP70 patient monitor firmware allows remote code execution',
+    narrative: 'An attacker on the hospital network could send specially crafted packets to the monitor, causing a buffer overflow. This allows execution of arbitrary code with system privileges, enabling the attacker to manipulate vital sign readings or disable alarm functions.',
+    impact: 'Critical patient safety risk. Compromised monitors could display false vital signs (heart rate, blood pressure, oxygen saturation) leading to incorrect clinical decisions. Alarm suppression could prevent detection of patient deterioration in ICU settings.',
+  },
+  {
+    sarif: {
+      version: '2.1.0',
+      runs: [{
+        tool: { driver: { name: 'ICS-CERT Scanner' } },
+        results: [{
+          ruleId: 'CVE-2024-5678',
+          level: 'warning',
+          message: { text: 'Authentication bypass in Baxter infusion pump' }
+        }]
+      }]
+    },
+    cpe: 'cpe:2.3:h:baxter:infusion_pump:sigma_spectrum:*:*:*:*:*:*:*',
+    exploitUri: 'https://github.com/medical-security/baxter-auth-bypass',
+    upstreamApi: 'https://www.cisa.gov/ics-cert/advisories/icsa-24-001',
+    description: 'Authentication bypass vulnerability in Baxter Sigma Spectrum infusion pump allows unauthorized access to drug library',
+    narrative: 'An attacker with physical or network access could bypass authentication mechanisms and modify the drug library parameters. This includes changing maximum dose limits, infusion rates, and alarm thresholds without proper credentials.',
+    impact: 'Life-threatening medication errors. Altered drug libraries could allow dangerous overdoses or underdoses. Modified rate limits could enable fatal medication administration. Suppressed alarms prevent clinical staff from detecting improper infusions.',
+  },
+  {
+    sarif: {
+      version: '2.1.0',
+      runs: [{
+        tool: { driver: { name: 'FDA Cybersecurity Scanner' } },
+        results: [{
+          ruleId: 'CVE-2024-9012',
+          level: 'error',
+          message: { text: 'SQL injection in GE Healthcare PACS system' }
+        }]
+      }]
+    },
+    cpe: 'cpe:2.3:h:ge_healthcare:optima_ct660:*:*:*:*:*:*:*:*',
+    exploitUri: 'https://github.com/healthcare-vulns/ge-pacs-sqli',
+    upstreamApi: 'https://nvd.nist.gov/vuln/detail/CVE-2024-9012',
+    description: 'SQL injection vulnerability in GE Healthcare CT scanner PACS interface allows database manipulation',
+    narrative: 'An authenticated user could inject SQL commands through the PACS query interface. This allows reading, modifying, or deleting patient imaging records, exam metadata, and radiologist reports stored in the imaging database.',
+    impact: 'HIPAA violation and patient safety risk. Attackers could access protected health information (PHI) including patient demographics and medical images. Modified or deleted imaging studies could lead to misdiagnosis. Altered reports could result in inappropriate treatment decisions.',
+  },
+  {
+    sarif: {
+      version: '2.1.0',
+      runs: [{
+        tool: { driver: { name: 'MITRE Scanner' } },
+        results: [{
+          ruleId: 'CVE-2024-3456',
+          level: 'warning',
+          message: { text: 'Weak encryption in Epic EMR interface' }
+        }]
+      }]
+    },
+    cpe: 'cpe:2.3:a:epic:emr:2023:*:*:*:*:*:*:*',
+    exploitUri: 'https://github.com/ehr-security/epic-encryption-weakness',
+    upstreamApi: 'https://nvd.nist.gov/vuln/detail/CVE-2024-3456',
+    description: 'Weak encryption in Epic EMR HL7 interface allows interception of patient data',
+    narrative: 'The HL7 messaging interface uses deprecated encryption (DES) for patient data transmission. An attacker with network access could intercept and decrypt messages containing patient demographics, diagnoses, medications, and lab results.',
+    impact: 'Massive HIPAA breach potential. Compromised EMR data includes complete medical histories, social security numbers, insurance information, and treatment plans. Exposure affects entire patient population. Regulatory fines and loss of patient trust.',
+  },
+  {
+    sarif: {
+      version: '2.1.0',
+      runs: [{
+        tool: { driver: { name: 'Vendor Scanner' } },
+        results: [{
+          ruleId: 'CVE-2024-7890',
+          level: 'error',
+          message: { text: 'Remote code execution in Siemens MRI scanner' }
+        }]
+      }]
+    },
+    cpe: 'cpe:2.3:h:siemens:magnetom_aera:*:*:*:*:*:*:*:*',
+    exploitUri: 'https://github.com/imaging-vulns/siemens-mri-rce',
+    upstreamApi: 'https://cert.vde.com/en/advisories/VDE-2024-001',
+    description: 'Remote code execution vulnerability in Siemens Magnetom Aera MRI scanner control software',
+    narrative: 'Unauthenticated remote attacker could send malicious DICOM messages to the MRI scanner, triggering a stack overflow in the image processing module. This allows arbitrary code execution with SYSTEM privileges on the scanner workstation.',
+    impact: 'Patient safety and equipment damage risk. Compromised MRI could alter scan parameters (gradient strength, RF power) causing patient harm or equipment damage. Modified images could lead to misdiagnosis. Scanner downtime disrupts radiology workflow and delays critical imaging.',
+  },
+  {
+    sarif: {
+      version: '2.1.0',
+      runs: [{
+        tool: { driver: { name: 'Lab Equipment Scanner' } },
+        results: [{
+          ruleId: 'CVE-2024-2345',
+          level: 'warning',
+          message: { text: 'Default credentials in Roche Cobas analyzer' }
+        }]
+      }]
+    },
+    cpe: 'cpe:2.3:h:roche:cobas_6000:*:*:*:*:*:*:*:*',
+    exploitUri: 'https://github.com/lab-security/roche-default-creds',
+    upstreamApi: 'https://nvd.nist.gov/vuln/detail/CVE-2024-2345',
+    description: 'Hardcoded default credentials in Roche Cobas 6000 laboratory analyzer',
+    narrative: 'The analyzer ships with hardcoded administrative credentials that cannot be changed. An attacker with network access could log in using these credentials and access all analyzer functions including result reporting and quality control data.',
+    impact: 'Lab result integrity compromised. Attackers could modify test results before transmission to EMR, leading to incorrect diagnoses and treatment. Altered QC data could hide equipment malfunction. False critical values could trigger unnecessary interventions.',
+  },
+  {
+    sarif: {
+      version: '2.1.0',
+      runs: [{
+        tool: { driver: { name: 'Network Scanner' } },
+        results: [{
+          ruleId: 'CVE-2024-6789',
+          level: 'error',
+          message: { text: 'Privilege escalation in Cisco hospital network switch' }
+        }]
+      }]
+    },
+    cpe: 'cpe:2.3:h:cisco:catalyst_9300:*:*:*:*:*:*:*:*',
+    exploitUri: 'https://github.com/network-exploits/cisco-priv-esc',
+    upstreamApi: 'https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-2024-001',
+    description: 'Local privilege escalation vulnerability in Cisco Catalyst 9300 switch firmware',
+    narrative: 'An authenticated user with low privileges could exploit a logic flaw in the CLI command parser to escalate to administrative privileges. This allows complete control over network switch configuration, VLAN assignments, and port security.',
+    impact: 'Hospital network segmentation failure. Compromised network infrastructure could allow lateral movement between clinical and administrative networks. Attackers could access isolated medical device VLANs, intercept patient data, or disrupt critical network services including PACS, EMR, and pharmacy systems.',
+  },
+];
+
+
 async function clearDatabase() {
   console.log('🗑️  Clearing database...');
 
   // Delete in order of dependencies (child tables first)
+  await prisma.vulnerability.deleteMany();
   await prisma.assetSettings.deleteMany();
   await prisma.asset.deleteMany();
   // Don't delete users - we'll handle the seed user separately
@@ -219,6 +358,24 @@ async function seedAssets(userId: string) {
   return assets;
 }
 
+async function seedVulnerabilities(userId: string) {
+  console.log('\n🌱 Seeding vulnerabilities...');
+
+  const vulnerabilities = await Promise.all(
+    SAMPLE_VULNERABILITIES.map((vulnerability) =>
+      prisma.vulnerability.create({
+        data: {
+          ...vulnerability,
+          userId,
+        },
+      })
+    )
+  );
+
+  console.log(`✅ Seeded ${vulnerabilities.length} vulnerabilities`);
+  return vulnerabilities;
+}
+
 async function main() {
   console.log('🌱 Starting database seed...\n');
 
@@ -234,9 +391,9 @@ async function main() {
 
     // Seed data
     await seedAssets(user.id);
+    await seedVulnerabilities(user.id);
 
     // Future seeds will go here:
-    // await seedVulnerabilities(user.id);
     // await seedRemediations(user.id);
 
     console.log('\n✅ Database seeding completed successfully!');

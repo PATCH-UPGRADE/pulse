@@ -370,7 +370,7 @@ export const EntityItem = ({
   }
 
   return (
-    <Link href={href} prefetch>
+    <Link href={href}>
       {content}
     </Link>
   )
