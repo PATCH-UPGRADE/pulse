@@ -89,13 +89,55 @@ Instead of baking every possible analytic or reporting workflow into the core, P
 
 - QA other components. PULSE assumes, for example, when TA3 says there is a vulnerability that it must check that to be true. Instead, PULSE maintains a reference to the TA3 exploit, which it assumes works as intended.
 
-### API-Centric
+### Anchor story and walk-through
 
-- PULSE exposes APIs for integration. All references in this document are
-  nested under `/api` on the server.
+**Anchor User Story:**
 
-- Field names are spinal-case, not camelCase and not snake_case. We like
-  spinal-case because it's more readable, and doesn't require the shift key.
+> If I deploy this patch in the ICU monitor today, how many patient systems
+> will be offline and for how long? How will treatments be affected?
+> What security risk remains if I delay it 24 hours? How do these choices
+> affect compliance, safety, and cost?
+
+**Mindset:**
+Rather than thinking of the VMP as a raw network simulator, think of it as
+hospital digital twin, where each system is a node representing a _clinical
+function_, not just an IP address.
+
+- **Nodes:** ICU monitors, infusion pumps, lab analyzers, pharmacy servers,
+  nurse electronic medical record (EMR) workstations.
+- **Edges:** Data or work flow dependencies ("Lab -> EMR -> Nurse Station ->
+  Infusion pump")
+- **Attributes:** Vulnerability score, patch status, uptime requirement,
+  regulatory criticality.
+
+A core component of the VMP is to enable users to perform hospital
+simulations to understand outcomes.
+
+**Example Answer to Anchor Story:**
+
+Consider the workflow:
+
+> Lab -> EMR -> Nurse Station -> Infusion pump
+
+When a downstream TA proposes a change (e.g., TA-4 asks to apply patch to all
+infusion pumps running InsecureOS4.1), the VMP:
+
+- Highlights _affects device nodes_ for the security engineer and _affected
+  clinical nodes_ for the clinician.
+- Gathers data from the WHS on hospital impact.
+- Generates _summary metrics_ for application to the real hospital: downtime,
+  risk reduction, clinical impact, regulatory delta.
+
+- Impact summary produced, e.g., "patching now reduces exploit risk 92%
+  (determined by CVSS score) on 15 machines, causing 0.5 hours downtime in
+  radiology with affected machines."
+- Produces recommendation: "Apply to radiology systems at midnight; schedule remaining
+  across network for low-load hours."
+
+### API-Centric Design
+
+- PULSE exposes APIs for integration. (All references in this document are
+  nested under `/api` on the server.)
 
 - Every request to the REST API includes an HTTP method and a path, and a bearer token for authenticcated endpoints.
 
@@ -103,7 +145,11 @@ Instead of baking every possible analytic or reporting workflow into the core, P
 
 - Endpoints are RESTful, supporting POST, GET, DELETE, and UPDATE.
 
-- HTTP status codes reflect API success, e.g., 2xx reflects a successful API request.
+- HTTP status codes reflect API success, e.g., 2xx reflects a successful API
+  request.
+
+- Field names are spinal-case, not camelCase and not snake_case. Because
+  snake_case requires the shift key, and camelCase is less readable.
 
 ### Data formats
 
